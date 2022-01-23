@@ -1,0 +1,36 @@
+---
+title: "Assign1_Bivariate_Regression"
+author: "Serena Choi"
+date: "1/23/2022"
+output: html_document
+---
+
+## Bivariate Regression and Residuals
+
+In this assignment, we will perform a bivariate linear regression analysis of the OECD welfare state data. The objective is to test the null hypothesis that governments controlled by left/labor parties do *not* have more egalitarian welfare states. 
+
+
+### Research question 
+
+This research question asks whether there is a relationship between welfare state development and the legislative & cabinet seat shares for left or labour parties among the OECD countries.
+
+We can write a regression equation: 
+
+*y = B0 + B1x + e* 
+
+where y (response variable) is represented by **decom** and x (explanatory variable) is represented by **left**. 
+
+Our null hypothesis is as follows: 
+
+*H0 = B1 = 0*
+
+which means that the slope of the regression equation is 0. 
+
+
+### Estimating a model 
+
+```{r}
+head(oecd)
+```
+
+### Fitting a model 
