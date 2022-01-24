@@ -14,6 +14,8 @@ oecd <- read.csv(file="oecd.csv")
 ```
 
 
+
+
 ### Research question 
 
 This research question asks whether there is a relationship between welfare state development and the legislative & cabinet seat shares for left or labour parties among the OECD countries.
@@ -26,6 +28,8 @@ where y (response variable) is represented by **decom** and x (explanatory varia
 Our null hypothesis is as follows: 
 *H0 = B1 = 0*
 which means that the slope of the regression equation is 0. 
+
+
 
 
 ### Estimating a model 
@@ -63,6 +67,8 @@ The key analyses from the model summary table above are:
 
 
 
+
+
 ### Residuals 
 
 The scatterplot of data and the regression line look like the below: 
@@ -74,6 +80,7 @@ abline(a=B0, b=B1, col="blue")
 text(oecd$left, oecd$decom, labels=oecd$X, cex=0.75, 
      font=1)
 ```
+
 
 
 By examining the residuals, we can see that in countries such as Canada, Ireland, Italy and Finland, left party representation is a strong predictor of decommodification. On the other hand, In countries such as USA, Australia, NZ, Netherlands, UK, Denmark and Norway, left party representation is a poor predictor of welfare state development. 
