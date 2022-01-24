@@ -16,7 +16,7 @@ oecd <- read.csv(file="oecd.csv")
 
 
 
-### Research question 
+## Research question 
 
 This research question asks whether there is a relationship between welfare state development and the legislative & cabinet seat shares for left or labour parties among the OECD countries.
 
@@ -32,7 +32,7 @@ which means that the slope of the regression equation is 0.
 
 
 
-### Estimating a model 
+## Estimating a model 
 
 We will examine the relationship between gdp and decom.  
 The *slope* of the regression equation, B1, can be found using the following equation: cov(x,y)/var(x)
@@ -69,7 +69,7 @@ The key analyses from the model summary table above are:
 
 
 
-### Residuals 
+## Residuals 
 
 The scatterplot of data and the regression line look like the below: 
 
