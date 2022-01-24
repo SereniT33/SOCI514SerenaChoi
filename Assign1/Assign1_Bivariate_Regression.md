@@ -1,4 +1,4 @@
-Assign1_Bivariate_Regression
+Assignment 1: Bivariate Regression
 ================
 Serena Choi
 1/23/2022
@@ -14,26 +14,20 @@ null hypothesis that governments controlled by left/labor parties do
 oecd <- read.csv(file="oecd.csv")
 ```
 
-### Research question
+## Research question
 
 This research question asks whether there is a relationship between
 welfare state development and the legislative & cabinet seat shares for
 left or labour parties among the OECD countries.
 
-We can write a regression equation:
+We can write a regression equation: *y = B0 + B1x + e* where y (response
+variable) is represented by **decom** and x (explanatory variable) is
+represented by **left**.
 
-*y = B0 + B1x + e*
+Our null hypothesis is as follows: *H0 = B1 = 0* which means that the
+slope of the regression equation is 0.
 
-where y (response variable) is represented by **decom** and x
-(explanatory variable) is represented by **left**.
-
-Our null hypothesis is as follows:
-
-*H0 = B1 = 0*
-
-which means that the slope of the regression equation is 0.
-
-### Estimating a model
+## Estimating a model
 
 We will examine the relationship between gdp and decom.  
 The *slope* of the regression equation, B1, can be found using the
@@ -82,10 +76,11 @@ summary(model1)
     ## Multiple R-squared:  0.2943, Adjusted R-squared:  0.2502 
     ## F-statistic: 6.672 on 1 and 16 DF,  p-value: 0.02002
 
-The key analyses from the model summary table above are: 1. The
-intercept, B0, is 22.6877. As we discussed in the class, this number
-does not have much meaning as countries rarely have 0 seat shares of
-left or labor parties in reality.
+The key analyses from the model summary table above are:
+
+1.  The intercept, B0, is 22.6877. As we discussed in the class, this
+    number does not have much meaning as countries rarely have 0 seat
+    shares of left or labor parties in reality.
 
 2.  The slope, B1, is 1.6140, indicating a positive relationship between
     the two variables (decom & left). It can be interpreted that the
@@ -100,7 +95,7 @@ left or labor parties in reality.
 4.  However, the R-squared value is pretty low, indicating the model is
     not a good fit to data overall.
 
-### Residuals
+## Residuals
 
 The scatterplot of data and the regression line look like the below:
 
@@ -113,6 +108,7 @@ text(oecd$left, oecd$decom, labels=oecd$X, cex=0.75,
 ```
 
 ![](Assign1_Bivariate_Regression_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
 By examining the residuals, we can see that in countries such as Canada,
 Ireland, Italy and Finland, left party representation is a strong
 predictor of decommodification. On the other hand, In countries such as
