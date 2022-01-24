@@ -78,22 +78,22 @@ summary(model1)
 
 The key analyses from the model summary table above are:
 
-1.  The intercept, B0, is 22.6877. As we discussed in the class, this
-    number does not have much meaning as countries rarely have 0 seat
-    shares of left or labor parties in reality.
+1.  The **intercept**, B0, is 22.6877. As we discussed in the class,
+    this number does not have much meaning as countries rarely have 0
+    seat shares of left or labor parties in reality.
 
-2.  The slope, B1, is 1.6140, indicating a positive relationship between
-    the two variables (decom & left). It can be interpreted that the
-    1.6140 unit increase in y (welfare state development) for a one unit
-    increase in x (left seat share).
+2.  The **slope**, B1, is 1.6140, indicating a positive relationship
+    between the two variables (decom & left). It can be interpreted that
+    the 1.6140 unit increase in y (welfare state development) for a one
+    unit increase in x (left seat share).
 
 3.  Both the t-statistic of 2.583 and the p-value of 0.02002 indicate
-    that we can reject the null hypothesis. Therefore, the changes in
-    left/labor party seats are related to changes in welfare
+    that **we can reject the null hypothesis**. Therefore, the changes
+    in left/labor party seats are related to changes in welfare
     development.
 
-4.  However, the R-squared value is pretty low, indicating the model is
-    not a good fit to data overall.
+4.  However, the **R-squared** value is pretty low, indicating the model
+    is a poor fit to data overall.
 
 ## Residuals
 
@@ -109,8 +109,9 @@ text(oecd$left, oecd$decom, labels=oecd$X, cex=0.75,
 
 ![](Assign1_Bivariate_Regression_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
-By examining the residuals, we can see that in countries such as Canada,
-Ireland, Italy and Finland, left party representation is a strong
-predictor of decommodification. On the other hand, In countries such as
-USA, Australia, NZ, Netherlands, UK, Denmark and Norway, left party
-representation is a poor predictor of welfare state development.
+By examining the residuals, we can see that in countries such as
+*Canada, Ireland, Italy and Finland,* left party representation is a
+**strong** predictor of decommodification. On the other hand, In
+countries such as *USA, Australia, NZ, Netherlands, UK, Denmark and
+Norway,* left party representation is a **poor** predictor of welfare
+state development.
