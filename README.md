@@ -14,7 +14,8 @@ This repository contains the following documents:
 
 1. A README file - containing information about the repository;
 2. Folders - leading to each assignments; 
-3. Rmd files within folders - containing all codes for assignments. 
+3. Rmd files within folders - containing all codes for assignments;
+4. PDF files - for submission. 
 
 #### Running the code
 
