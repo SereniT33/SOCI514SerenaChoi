@@ -28,6 +28,7 @@ is.matrix(y)
 ```
 
 
+
 #### 1. Matrix calculations
 
 We will calculate the following matrices: X', X'X, X'y
@@ -50,6 +51,8 @@ Similarly, the calculation for X'y is as follows:
 t.X.y <- t(X) %*% y
 t.X.y
 ```
+
+
 
 #### 2. Matrix operations 
 
@@ -78,6 +81,9 @@ We can see that the beta coefficients estimates from the model summary statistic
 
 
 
+
+
+
 ### Part II. Multivariate Regression 
 
 Using the OECD data set, we will perform a multivariate linear regression analysis. The *research questions* are: 
@@ -89,24 +95,29 @@ Using the OECD data set, we will perform a multivariate linear regression analys
 oecd <- read.csv(file="oecd.csv")
 ```
 
-In order to answer the *first research question*, we will look at three models with decommodification as the response variable. **Model 1** is the bivariate model that we created in the Assignment 1, with left politics as an independent variable. 
+
+
+In order to answer the **first research question**, we will look at three models with decommodification as the response variable. 
+
+**Model 1** is the bivariate model that we created in the Assignment 1, with left politics as an independent variable. 
 **Model 2** will add economic development as another independent variable, and **Model 3** will consider all three as independent variables. 
 
-According to the model 1 below, the beta coefficient of left politics is 1.6140, indicating the **1.6140 unit increase** in welfare state development for a one unit increase in left politics. This is statistically significant at p<=0.05. 
+
+According to the model 1 below, the beta coefficient of left politics is 1.6140, indicating the *1.6140 unit increase* in welfare state development for a one unit increase in left politics. This is statistically significant at p<=0.05. 
 ```{r}
 model1 <- lm(decom ~ left, data=oecd)
 summary(model1)
 ```
 
 
-In the model 2, this beta coefficient **decreases to 1.1512**, indicating left politics has less impact on decommodification when holding economic development constant. Another change is that p-value has increased to 0.08, and therefore, it is marginally significant at 0.05 level. 
+In the model 2, this beta coefficient *decreases to 1.1512*, indicating left politics has less impact on decommodification when holding economic development constant. Another change is that p-value has increased to 0.08, and therefore, it is marginally significant at 0.05 level. 
 ```{r}
 model2 <- lm(decom ~ left + gdp, data = oecd)
 summary(model2)
 ```
 
 
-Similary, in the model 3, the coefficient **further decreases to 0.3313**, indicating only 0.3313 unit increases in mean of decommodification for one unit increase in left politics, net of economic development and age demographics. The p-value is 0.714, and therefore, it is marginally significant at 0.05 level. 
+Similary, in the model 3, the coefficient *further decreases to 0.3313*, indicating only 0.3313 unit increases in mean of decommodification for one unit increase in left politics, net of economic development and age demographics. The p-value is 0.714, and therefore, it is marginally significant at 0.05 level. 
 ```{r}
 model3 <- lm(decom ~ left + gdp + gt65, data = oecd)
 summary(model3)
@@ -117,7 +128,13 @@ In conclusion, the coefficient estimate for left politics continues to decrease 
 
 
 
-The *second research question* requires us to examine the model 3 more closely. In this multivariate regression, the **null hypotheses** are the beta coefficients for all three independent variables are 0. 
+
+
+
+
+
+
+The **second research question** requires us to examine the model 3 more closely. In this multivariate regression, the *null hypotheses* are the beta coefficients for all three independent variables are 0. 
 
 Let's look at the summary statistics of the model 3 again: 
 ```{r}
@@ -126,8 +143,8 @@ summary(model3)
 
 The key analyses from the model above is as follows:
 
-1. The **beta estimates** for the left politics, gdp, gt65 are 0.0014, 0.3313 and 0.7851, respectively. That is, all three variables have positive relationship with the response variable, decommodification, when controlling one another constant. As we learned in the lecture, we cannot compare the magnitudes of these coefficients as they are in different metric units.  
+1. The *beta estimates* for the left politics, gdp, gt65 are 0.0014, 0.3313 and 0.7851, respectively. That is, all three variables have positive relationship with the response variable, decommodification, when controlling one another constant. As we learned in the lecture, we cannot compare the magnitudes of these coefficients as they are in different metric units.  
 
-2. Looking at p-values, while left politics is only marginally significant at 0.05 level, the other two variables are very significant at 0.05. Overall, we can **reject the null hypotheses**, and therefore, conclude that **all three variables have impacts on welfare state development**. 
+2. Looking at p-values, while left politics is only marginally significant at 0.05 level, the other two variables are very significant at 0.05. Overall, we can *reject the null hypotheses*, and therefore, conclude that *all three variables have impacts on welfare state development*. 
 
-3. The **model fit is good** looking at R-squared and F-statistics join p-value. 
+3. The *model fit is good* looking at R-squared and F-statistics join p-value. 
