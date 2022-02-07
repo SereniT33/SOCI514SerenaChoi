@@ -51,7 +51,7 @@ summary(model1)
 #### Education as a categorical variable
 
 Instead of a continuous variable, education can be modeled as a
-categorical variable. We will create four categorical variables
+*categorical* variable. We will create four categorical variables
 depending on education level:
 
 ``` r
@@ -62,8 +62,8 @@ ugrad <- as.numeric(cps$educ >= 16)
 ```
 
 When modelling with these categorical variables, we will set the first
-group (education less than high school; “lths”) as referent. Hence, the
-second model looks like the following:
+group (education less than high school; “lths”) as referent. Hence,
+**Model 2** looks like the following:
 
 ``` r
 model2 <- lm(logwg ~ age + hs + somecoll + ugrad)
@@ -94,7 +94,8 @@ summary(model2)
 
 ### 2. Interaction effect between education and race
 
-The simple additive model of age and race is as follows:
+**Model 3** is a simple additive model that looks at the effects of
+education and race on earnings.
 
 ``` r
 model3 <- lm(logwg ~ educ + race)
@@ -121,8 +122,8 @@ summary(model3)
     ## Multiple R-squared:  0.1192, Adjusted R-squared:  0.1192 
     ## F-statistic:  2141 on 2 and 31636 DF,  p-value: < 2.2e-16
 
-When we add the interaction between age and race, the model changes as
-the below:
+**Model 4**, in comparison, adds the interaction variable between
+education and race.
 
 ``` r
 model4 <- lm(logwg ~ educ + race + educ*race)
@@ -152,8 +153,8 @@ summary(model4)
 
 ## Interpretation
 
-**Model 1** below is based on the assumption that both age and education
-are *continuous*. That is, a unit increase in age is associated with, on
+**Model 1** is based on the assumption that both age and education are
+*continuous*. That is, a unit increase in age is associated with, on
 average, a 0.022 unit increase in log weekly wage, net of education.
 Similarly, a unit increase in education is associated with, on average,
 0.089 unit increase in log weekly wage. Looking at both t-values,
@@ -161,7 +162,8 @@ compared to standard errors, and p-values, we can conclude that both
 variables are statistically significant, and therefore, we can reject
 the null hypotheses, where coefficients are 0. Looking at the adjusted
 R-square value, this model accounts for about 21% of variance of y.
-While it is not terrible, the model does not fit the observations well.
+While it is not terrible, the model does not fit the observations quite
+well.
 
 ``` r
 summary(model1)
@@ -188,18 +190,18 @@ summary(model1)
     ## F-statistic:  4410 on 2 and 31636 DF,  p-value: < 2.2e-16
 
 **Model 2** still looks at the effect of age and education on weekly
-wages, however, the difference from Model 1 is that Model 2 considers
+wages. However, the difference from Model 1 is that Model 2 considers
 education as a *categorical variable*. This allow us to compare more
-than two groups and examine effect of educational transitions on wages.
-In this model, less than high school group is set as the referent.
-Hence, the intercept, 4.770, represents the log weekly wages for high
-school dropouts, net of age. The coefficient estimates for the other
-variables show the average differences in log weekly wages depending on
-education levels. We can test the hypothesis that all the slope
-coefficients are 0 using a basic F-test. Looking at the F-statistic
-value, we can reject the null and determine that all variables here are
-statistically significant. The fit of Model 2 is similar to that of
-Model 1.
+than two groups of education levels and further examine effect of
+educational transitions on wages. In this model, less than high school
+group is set as the referent. Hence, the intercept, 4.770, represents
+the log weekly wages for high school dropouts, net of age. The
+coefficient estimates for the other variables show the average
+differences in log weekly wages depending on education levels. We can
+test the hypothesis that all the slope coefficients are 0 using a basic
+F-test. Looking at the F-statistic value, we can reject the null and
+determine that all variables here are statistically significant. The fit
+of Model 2 is similar to that of Model 1.
 
 ``` r
 summary(model2)
@@ -246,8 +248,9 @@ legend(55,10, c("lths", "hs", "somcoll", "ugrad"), col=c("red", "blue", "green",
 earnings may vary for black and white men in the U.S. Note that race
 here is a dummy variable. Looking at the summary statistics below, we
 can analyze that on average, white men earn 0.179 unit more in weekly
-log wages than black men. This difference is statistically significant.
-This model does not fit well as the adjusted R-squared value is low.
+log wages than black men, net of education. This difference is
+statistically significant. This model does not fit well as the adjusted
+R-squared value is low.
 
 ``` r
 summary(model3)
@@ -286,7 +289,7 @@ legend(20,10, c("Black", "White"), col=c("red", "blue"))
 
 ![](Assign3_Choi_Categorical_Variable_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
-Different from Model 3, **Model 4** considers an interaction effect
+Different from Model 3, **Model 4** considers an *interaction effect*
 between education and race by adding the variable, education\*race.
 Given the summary statistics below, the race coefficient estimate,
 0.004, is the difference between average log wages for black and white
@@ -338,7 +341,7 @@ depending on race. We can compare Model 3 and Model 4 by conducting an
 incremental F-test. Looking at the ANOVA summary statistics below, the F
 ratio is 5. An F-ratio of 5 on 1 and 31635 df is significant at 0.05
 level. Therefore, we can reject the null hypothesis of parallelism and
-conclude that there is an interaction between age and race.
+conclude that *there is an interaction between age and race*.
 
 ``` r
 anova(model3, model4)
