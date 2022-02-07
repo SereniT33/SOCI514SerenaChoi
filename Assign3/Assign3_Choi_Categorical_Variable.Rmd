@@ -46,6 +46,7 @@ model2 <- lm(logwg ~ age + hs + somecoll + ugrad)
 summary(model2)
 ```
 
+
 ### 2. Interaction effect between education and race 
 
 The simple additive model of age and race is as follows:
@@ -61,6 +62,7 @@ When we add the interaction between age and race, the model changes as the below
 model4 <- lm(logwg ~ educ + race + educ*race)
 summary(model4)
 ```
+
 
 ## Interpretation
 
@@ -103,13 +105,14 @@ abline(a=4.68+0.18, b=0.09, col="blue")
 legend(20,10, c("Black", "White"), col=c("red", "blue"))
 ```
 
-<br>
+
 Different from Model 3, **Model 4** considers an interaction effect between education and race by adding the variable, education*race. Given the summary statistics below, the race coefficient estimate, 0.004, is the difference between average log wages for black and white men in the U.S. This is much smaller than that of Model 3. However, this difference is not statistically significant when looking at t-value. The interaction variable, however, is statistically significant at 0.05 level. 
 
 ```{r}
 summary(model4)
 ```
-<br>
+
+
 The major difference between Model 3 and Model 4 is that Model 4 does not assume parallel slopes. This becomes clear when we plot Model 4: 
 
 ```{r}

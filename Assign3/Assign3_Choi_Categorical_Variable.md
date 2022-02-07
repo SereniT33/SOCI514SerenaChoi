@@ -286,7 +286,7 @@ legend(20,10, c("Black", "White"), col=c("red", "blue"))
 
 ![](Assign3_Choi_Categorical_Variable_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
-<br> Different from Model 3, **Model 4** considers an interaction effect
+Different from Model 3, **Model 4** considers an interaction effect
 between education and race by adding the variable, education\*race.
 Given the summary statistics below, the race coefficient estimate,
 0.004, is the difference between average log wages for black and white
@@ -320,9 +320,8 @@ summary(model4)
     ## Multiple R-squared:  0.1194, Adjusted R-squared:  0.1193 
     ## F-statistic:  1429 on 3 and 31635 DF,  p-value: < 2.2e-16
 
-<br> The major difference between Model 3 and Model 4 is that Model 4
-does not assume parallel slopes. This becomes clear when we plot Model
-4:
+The major difference between Model 3 and Model 4 is that Model 4 does
+not assume parallel slopes. This becomes clear when we plot Model 4:
 
 ``` r
 plot3 <- plot(educ, logwg, main= "Effect of Education & Race on Earnings: Interaction")
