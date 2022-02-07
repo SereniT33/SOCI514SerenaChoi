@@ -19,7 +19,7 @@ logwg <- cps$logwg
 
 #### Education as a continuous measure
 
-**Model 1** considers age and education as both continuous variables.
+**Model 1** considers age and education as both *continuous* variables.
 Setting log weekly wages as dependent variable, it examines the effect
 of education on earnings, net of age, and vice versa.
 
