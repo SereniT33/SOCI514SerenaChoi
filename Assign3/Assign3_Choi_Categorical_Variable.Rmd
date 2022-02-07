@@ -2,7 +2,7 @@
 title: "Assignment 3: Categorical Variables and Interaction Effects"
 author: "Serena Choi"
 date: "2/6/2022"
-output: github_document
+output: pdf_document
 ---
 
 For this assignment, we will use the U.S. CPS data. 
