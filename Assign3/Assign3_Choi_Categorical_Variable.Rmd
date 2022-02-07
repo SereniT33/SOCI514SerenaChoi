@@ -20,6 +20,7 @@ logwg <- cps$logwg
 
 #### Education as a continuous measure
 
+**Model 1** considers age and education as both continuous variables. Setting log weekly wages as dependent variable, it examines the effect of education on earnings, net of age, and vice versa. 
 
 ```{r}
 model1 <- lm(logwg ~ age + educ)
@@ -117,7 +118,7 @@ abline(a=4.84, b=0.08, col="red")
 abline(a=4.84+0.00, b=0.08+0.01, col="blue")
 legend(20,10, c("Black", "White"), col=c("red", "blue"))
 ```
-<br>
+
 The fact that the two groups (black and white) have different slopes indicates that the net effect of education on earnings may vary depending on race. We can compare Model 3 and Model 4 by conducting an incremental F-test. Looking at the ANOVA summary statistics below, the F ratio is 5. An F-ratio of 5 on 1 and 31635 df is significant at 0.01 level. Therefore, we can reject the null hypothesis of parallelism and conclude that there is an interaction between age and race. 
 
 ```{r}
