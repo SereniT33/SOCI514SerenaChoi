@@ -1,0 +1,15 @@
+---
+title: "Assign4_Choi_Nonlinear_effects"
+author: "Serena Choi"
+date: "2/16/2022"
+output: html_document
+---
+
+
+## 
+
+
+## 
+
+
+
