@@ -1,25 +1,21 @@
 ---
 title: "Assign5_Choi_OLS_Assumptions"
 author: "Serena Choi"
-date: "3/13/2022"
-output: html_document
+output: github_document
 ---
 
 
 ## Setting up 
 ```{r}
-install.packages(MASS)
-install.packages("lmtest")
-install.packages("zoo")
 library(MASS)
 library(lmtest)
 library(zoo)
 library(sandwich)
+library(readr)
 ```
 
 ```{r} 
-charity <- read.table("charity.csv", header = T) #importing charity data
-charity[1:10,]
+charity <- read_csv("charity.csv")
 attach(charity)
 
 #recoding sex and educ as dummy variables (0 or 1)
@@ -196,6 +192,8 @@ qqnorm((stand.res3),
        xlab="Theoretical Quantiles",
        main="QQ plot with WLS")
 ```
+
+
 This suggest that there must be additional reasons, other than over-weighted income variable, that contribute to the violations of OLS assumptions. Therefore, I will resort to using heteroscedastic consistent (HC) standard errors. 
 
 ```{r}
