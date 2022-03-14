@@ -1,7 +1,7 @@
 ---
 title: "Assign5_Choi_OLS_Assumptions"
 author: "Serena Choi"
-output: github_document
+output: pdf_document
 ---
 
 
