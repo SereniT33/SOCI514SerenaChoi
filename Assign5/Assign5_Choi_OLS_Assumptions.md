@@ -142,8 +142,8 @@ right.
 
 Looking at the QQ plot and the histogram of standardized residuals, we
 can conclude that the OLS assumption 1 is violated to a certain degree.
-That is, the standardized residuals are not normally distributed. This
-is likely because some dependent variables, such as wage, is highly
+That is, the *standardized residuals are not normally distributed*. This
+is likely because some independent variables, such as income, is highly
 skewed.
 
 ### Assumption 2: Mean of errors is zero.
@@ -167,8 +167,8 @@ abline(h=0, col="blue")
 ![](Assign5_Choi_OLS_Assumptions_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 The mean of standardized residual is very close to zero. It can be also
 determined by the plot above as the lines, each indicating the mean and
-0 respectively, overlay each other. Therefore, we can conclude that the
-assumption 2 is not violated, and therefore, the intercept is not
+0 respectively, overlay each other. Therefore, we can conclude that *the
+assumption 2 is not violated*, and therefore, the intercept is not
 biased.
 
 ### Assumption 3: Error is constant across cases.
@@ -208,8 +208,8 @@ bptest(Model1)
     ## BP = 42.905, df = 4, p-value = 1.083e-08
 
 The small p-value suggest that we can reject the null hypothesis.
-Therefore, we can conclude that the variance of the errors is not
-constant across cases, and the OLS assumption of homoscedasticity is
+Therefore, we can conclude that *the variance of the errors is not
+constant across cases*, and the OLS assumption of homoscedasticity is
 violated. Thus, the coefficients of the Model 1 are not the best linear
 unbiased estimators.
 
@@ -259,9 +259,9 @@ abline(h=0, col="pink")
 ![](Assign5_Choi_OLS_Assumptions_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 Looking at the four scatter plots, it is hard to conclude whether the
 fourth assumption is violated or not. One thing to note is that the
-scatter plot of standardized residuals against income may be slightly
-proportional. If it’s the case, we can suspect that error might be
-related to the income variable.
+scatter plot of standardized residuals against income (Fig.4) may be
+slightly proportional. If it’s the case, we can suspect that error might
+be related to the income variable.
 
 ## Dealing with Violations
 
@@ -291,9 +291,9 @@ hist(log(give))
 
 ![](Assign5_Choi_OLS_Assumptions_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
-Hence, Model 2 is created with log(y) as the dependent variable. We will
-check to see how QQ plots and variance of residuals by fitted values
-change.
+Hence, **Model 2** is created with log(y) as the dependent variable. We
+will check to see how QQ plots and variance of residuals by fitted
+values change.
 
 ``` r
 Model2<-lm(log(give+1)~income + age+ female + ugrad, data=charity)
@@ -330,12 +330,15 @@ plot(fitted(Model2), stand.res2, main="Std. Resids by Fitted(Log Give)")
 ```
 
 ![](Assign5_Choi_OLS_Assumptions_files/figure-gfm/unnamed-chunk-16-2.png)<!-- -->
+While we can observe a pattern of fanning out to a small degree,
+transforming a dependent variable in log term still effectively
+addresses the non-constant variance of the errors. Therefore, we can
+conclude that the **log-transformation of the dependent variable is a
+great choice to make the errors normal and constant across cases.**
 
-However, the non-constant variance of the errors are not as effectively
-addressed. This strengthens the suspicion that there may be association
-between error with independent variables, namely income. Thus, we will
-try addressing the violations using weighted least squares, by
-down-weighting income variable.
+Additionally, we will examine if another approach can be more effective
+or not. We will try addressing the violations using **weighted least
+squares**, by down-weighting income variable.
 
 ``` r
 w <- (1/(charity$income))
@@ -348,6 +351,8 @@ plot(fitted(Model3), stand.res3, main="Std. Resids by Fitted y with WLS")
 Looking at the scatter plot above, we can observe that using WLS has
 addressed heteroscedasticity. However, when we look at the QQ plot
 below, we can see that the distribution of the errors is not normalized.
+Therefore, **WLS is not a good approach to address the assumption
+violation in this case.**
 
 ``` r
 qqnorm((stand.res3),
@@ -357,24 +362,3 @@ qqnorm((stand.res3),
 ```
 
 ![](Assign5_Choi_OLS_Assumptions_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
-
-This suggest that there must be additional reasons, other than
-over-weighted income variable, that contribute to the violations of OLS
-assumptions. Therefore, I will resort to using heteroscedastic
-consistent (HC) standard errors.
-
-``` r
-coeftest(Model1, vcov=vcovHC) 
-```
-
-    ## 
-    ## t test of coefficients:
-    ## 
-    ##                Estimate  Std. Error t value  Pr(>|t|)    
-    ## (Intercept) -6.2492e+02  9.8800e+01 -6.3251 3.051e-10 ***
-    ## income       1.8693e-02  1.8508e-03 10.0997 < 2.2e-16 ***
-    ## age          1.0093e+01  1.4279e+00  7.0682 2.092e-12 ***
-    ## female      -8.1520e+01  5.7502e+01 -1.4177    0.1564    
-    ## ugrad        4.1245e+02  9.2204e+01  4.4732 8.094e-06 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
