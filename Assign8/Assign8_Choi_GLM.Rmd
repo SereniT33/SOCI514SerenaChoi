@@ -1,0 +1,108 @@
+---
+title: "Assign8_Choi_GLM"
+author: "Serena Choi"
+date: "3/21/2022"
+output: pdf_document
+---
+## Setting up
+
+```{r}
+duncan <- read.csv("duncan.csv")
+colnames(duncan)<-c("occtitle", "occtype", "income", "educ", "prestige")
+attach(duncan)
+summary(duncan)
+library(nnet)
+library(dplyr)
+table(occtype)
+help(multinom)
+library(car)
+library(carData)
+library(MASS)
+```
+
+## Using the Duncan data, estimate the effect of prestige scores on occupational type using either a multinomial logistic regression OR an ordered logit model. 
+
+### Ordered logit model
+```{r}
+help(polr)
+ordered <- polr (as.ordered(occtype) ~ prestige  , method="logistic")
+summary(ordered)
+```
+
+According to the ordered logit model above, for a one-unit change in prestige score, the logit of observing higher level is expected to change by 0.038. 
+
+
+### Multinomial logistic regression. 
+```{r}
+multinomial <- multinom(factor(occtype) ~ prestige , data=duncan, method="logistic")
+summary(multinomial)
+```
+
+According to the mutlinomial logistic model, the effect of the prestige on logit of being in the professional category relative to the blue collar category is -9.319. The effect of the prestige on logit of being in the white-collar category relative to the blue collar category is -2.553. 
+
+##Interpret the effect of prestige scores on occupational type using odds  (in one sentence).   
+
+### ordered 
+```{r}
+or1 <- exp(coef(ordered))
+or1
+```
+
+For a one-unit change in prestige, the effect of one-unit change in prestige on the odd of being in a higher category is 1.039.
+
+### multinomial
+```{r}
+or2 <- exp(coef(multinomial))
+or2
+```
+
+The coefficients above reflect the odds of being in a given category relative to the blue-collar category. 
+
+## What is the predicted probability of being a professional for those with a prestige score of 10? What about for those with a prestige score of 90?
+
+ I left the sections below as a comment as I kept getting non-conformable arguments below. 
+```{r}
+###ordered
+#beta1 <- coef(ordered) 
+#tau1 <- ordered$zeta  # store the intercepts in an object called tau
+#X<-cbind(seq(from = 10, to = 90, by = 10)) # looking at the prestige score from 10 to 90
+#logit.prob <- function(eta){exp(eta)/(1+exp(eta))}  #the equation for calculating predicted probabilities
+#p1 <- logit.prob(tau[1] - X %*% beta)  # calculate the pred probability for blue collar (or category 1)
+#p2 <- logit.prob(tau[2] - X %*% beta) - logit.prob(tau[1] - X %*% beta) # calculate the pred probability for prof (or category 2)
+#p3 <- 1.0 - logit.prob(tau[2] - X %*% beta) # calculate the pred prob for white collar (or category 3)
+
+#p1	#blue collar
+#p2	#professional
+#p3 	#white collar
+```
+
+
+```{r}
+### multinomial
+#beta <- coef(multinomial) # store the coefficients in an object called beta
+#tau <- multinomial$zeta  # store the intercepts in an object called tau
+#X<-cbind(seq(from = 10, to = 90, by = 10)) # looking at the prestige score from 10 to 90
+#logit.prob <- function(eta){exp(eta)/(1+exp(eta))}  #the equation for calculating predicted probabilities
+#p1 <- logit.prob(tau[1] - X %*% beta)  # calculate the pred probability for blue collar (or category 1)
+#p2 <- logit.prob(tau[2] - X %*% beta) - logit.prob(tau[1] - X %*% beta) # calculate the pred probability for prof (or category 2)
+#p3 <- 1.0 - logit.prob(tau[2] - X %*% beta) # calculate the pred prob for white collar (or category 3)
+
+#p1	#blue collar
+#p2	#professional
+#p3 	#white collar
+```
+
+
+##Using the data on interlocking directorates, estimate the effect of assets and country on the number of interlocking directorates among firms.  
+
+```{r}
+ornstein <- read.csv("ornstein.csv")
+hist(ornstein$number)	#note the Poisson distribution
+table(ornstein$nation)
+model3 <- glm(number ~ assets + nation, family=poisson (link ="log"), data=ornstein)
+summary(model3)
+exp(model3$coef)
+```
+
+For every one million dollar increase in assets, the expected count of interlocking directorates increase by 1.00, net of country.
+
