@@ -1,0 +1,166 @@
+---
+title: "Assign6_Choi_Regression Diagnostics"
+author: "Serena Choi"
+output: html_document
+---
+
+## Setting up 
+```{r}
+chirot <- read.csv("chirot.csv")
+attach(chirot)
+library(MASS)
+```
+
+## Regression model 
+
+Model 1 below is a linear regression model with rebellion intensity ("intensity") as the dependent variable and commercialization ("commercial"), traditionalism ("tradition"), strength of middle class peasants ("peasant"), and land inequality ("inequal") as the independent variables.
+
+```{r}
+Model1 <- lm(intensity ~ commercial + tradition + peasant + inequal, data = chirot)
+summary(Model1)
+```
+
+According to the Model 1, independent variables including commercialization, traditionalism and inequality are positively associated with rebellion intensity. On the other hand strength of middle class peasantry is negatively associated with rebellion intensity. However, commercialization is the only variable that is statistically significant to rebellion intensity. The fit of the model is good as the adjusted R-squared is quite high.  
+
+## Outliers, leverage and influence 
+
+Assess the impact of any discrepant observations on your model estimates using the diagnostic tools for leverage, outliers, and influence we have discussed in class. Did you find any influential observations?
+
+### Detecting leverage 
+
+Leverage points are observations that are outlying in the x-direction. In order to detect them, we will examine the hat values, which capture contribution of each observation to the fitted values. 
+
+```{r}
+h<-hatvalues(Model1)
+plot(h)	
+2*mean(h)
+```
+Looking at the scatter plot above, there are points greater than twice the average of hat values. Therefore, we can suspect that there are leverage points. We will further confirm this suspicion by calculating the hat values. 
+
+```{r}
+k<-4
+n<-32
+plot(h)
+text(h, label=(1:length(county)))
+abline(h=(2*(k+1)/n), col="blue")
+abline(h=(3*(k+1)/n), col="red")
+```
+Looking at the plot above, we can confirm that **there are two leverage points, of which county numbers are 31 and 32**. 
+
+### Detecting outliers
+
+Outliers are observations that are far from the regression surface. We will diagnose outliers by identifying observations with studentized residuals less than -2 or greater than 2. 
+
+```{r}
+stu.res<-studres(Model1)			
+plot(stu.res, type="n")		
+text(stu.res, label=(1:length(county)))
+abline(h=2, col="red")
+abline(h=-2, col="red")
+```
+
+Looking at the plot above, we can conclude that **observations, such as county 3 and county 19, are outliers**. 
+
+We can observe that there are no observations that are both leverage points and outliers. In other words, there are no observations sufficient enough to influence the least squares estimates. 
+
+### Detecting influence
+
+Influential observations occur when the regression results change significantly as a consequence of omitting the observations. We will use DFBETAS to detect them. 
+
+```{r}
+df<-dfbetas (Model1)
+df		
+df.commercial <-df[,2]
+df.tradition <- df[,3]
+df.peasant <- df[,4]
+df.inequal <- df[,5]
+par(mfrow=c(1,4))
+
+#dfbetas for commercialization
+plot(df.commercial, type="n", ylab="Commercialization")
+text(df.commercial, label=(county))
+abline(h=(2/sqrt(n)), col="red")		# approx. cutoff for dfbetas = abs value of 2/sqrt(n)
+abline(h=-(2/sqrt(n)), col="red")
+```
+
+Looking at the DFBETAS for commercialization, county 19 and 26 are influential observations. 
+
+```{r}
+#dfbetas for tradition
+plot(df[,3], type="n", ylab="Tradition")
+text(df[,3], label=(county))
+abline(h=(2/sqrt(n)), col="red")
+abline(h=-(2/sqrt(n)), col="red")
+```
+Looking at DFBETAS for traditionalism, county 3, 18, 30 are influential observations. 
+
+```{r}
+#dfbetas for middle class strength
+plot(df[,4], type="n", ylab="Middle class strength")
+text(df[,4], label=(county))
+abline(h=(2/sqrt(n)), col="blue")
+abline(h=-(2/sqrt(n)), col="red")
+```
+In regards with DFBETAS for middle class strength, there are no influential observations. 
+
+```{r}
+#dfbetas for inequality
+plot(df[,5], type="n", ylab="Inequality")
+text(df[,5], label=(county))
+abline(h=(2/sqrt(n)), col="blue")
+abline(h=-(2/sqrt(n)), col="red")
+```
+Similarly, there are no influential observations in regards with DFBETAS for inequality. 
+
+We will try try fitting model without influential observations (county# 3,18,19,26,30)
+
+```{r}
+Model2 <- update(Model1, subset=-c(3,18,19,26,30))
+summary(Model2)
+```
+In the new model, the directions of associations remain the same. Furthermore, commercialization is still only an independent variable that is statistically significant. The noticeable change is that the fit of model has improved greatly after omitting the influential observations. Thus, it is reasonable to use the modified model instead of the original one. 
+
+## Colinearlity 
+
+We will further examine if there are colinearlity among the independent variables. 
+
+```{r}
+
+#inspect correlations
+cor(chriot, use="pairwise.complete.obs")	#create bivariate correlation matrix
+
+#install packages "car" and "carData"
+library(car)
+library(carData)
+vif(model2)	# vif gives the variance inflation factor for each variable
+
+# Let's try dropping men's wages
+model3<-lm(womwork~fertil+fwage)
+summary(model3)
+
+vif(model3)
+
+#Given these results, what would you advise for the analysis of 
+#female labour force participation?
+
+### OTHER DIAGNOSTICS ###
+
+### Influential cases using Cook's distance ###
+
+c<-cooks.distance(model1)
+
+par(mfrow=c(1,1))
+plot(c)
+abline(h=(4/(n-k-1)), col="red")
+abline(h=-(4/(n-k-1)), col="red")
+identify(c, label=occtitle)
+
+
+
+
+
+Check for collinearity among the independent variables. Do you have any reason to suspect it?
+
+## Addressing influential data and collinearity 
+
+Based on what you found in #2 and #3, how might you address any influential data and collinearity?
