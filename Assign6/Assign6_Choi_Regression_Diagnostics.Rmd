@@ -1,7 +1,7 @@
 ---
 title: "Assign6_Choi_Regression Diagnostics"
 author: "Serena Choi"
-output: html_document
+output: pdf_document
 ---
 
 ## Setting up 
@@ -9,6 +9,8 @@ output: html_document
 chirot <- read.csv("chirot.csv")
 attach(chirot)
 library(MASS)
+library(car)
+library(carData)
 ```
 
 ## Regression model 
@@ -120,47 +122,16 @@ summary(Model2)
 ```
 In the new model, the directions of associations remain the same. Furthermore, commercialization is still only an independent variable that is statistically significant. The noticeable change is that the fit of model has improved greatly after omitting the influential observations. Thus, it is reasonable to use the modified model instead of the original one. 
 
-## Colinearlity 
+## Collinearity 
 
-We will further examine if there are colinearlity among the independent variables. 
+We will further examine if there are collinearlity among the independent variables. 
 
 ```{r}
+vif(Model2)
+```
 
-#inspect correlations
-cor(chriot, use="pairwise.complete.obs")	#create bivariate correlation matrix
-
-#install packages "car" and "carData"
-library(car)
-library(carData)
-vif(model2)	# vif gives the variance inflation factor for each variable
-
-# Let's try dropping men's wages
-model3<-lm(womwork~fertil+fwage)
-summary(model3)
-
-vif(model3)
-
-#Given these results, what would you advise for the analysis of 
-#female labour force participation?
-
-### OTHER DIAGNOSTICS ###
-
-### Influential cases using Cook's distance ###
-
-c<-cooks.distance(model1)
-
-par(mfrow=c(1,1))
-plot(c)
-abline(h=(4/(n-k-1)), col="red")
-abline(h=-(4/(n-k-1)), col="red")
-identify(c, label=occtitle)
-
-
-
-
-
-Check for collinearity among the independent variables. Do you have any reason to suspect it?
+By checking VIF's, it is hard to suspect that any collinearity among the independent variables exist.
 
 ## Addressing influential data and collinearity 
 
-Based on what you found in #2 and #3, how might you address any influential data and collinearity?
+Based on what we found in regression diagnostics, we will address the model by ommitting influential observations. Therefore, I will advise to use Model 2. 
