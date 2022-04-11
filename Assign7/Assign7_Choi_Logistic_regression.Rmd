@@ -1,0 +1,80 @@
+---
+title: "Assign7_Choi_Logistic_regression"
+author: "Serena Choi"
+output: pdf_document
+---
+
+```{r}
+charity <- read.csv("charity.csv")
+attach(charity)
+summary(charity)
+age <- charity$age
+```
+
+## Logistic Regression
+
+For this assignment, I will examine the factors that determine whether a person 
+donates to charity or not by using logistic regression. To do so, I recode the
+continuous dependent variable "give" into binary measure of 0 and 1. 1 indicates
+that a person donates to a charity. 
+
+```{r}
+#Recode give as a binary measure
+give2<-as.numeric(give > 0)
+table(give2)		
+table(give2, income)	#tabulate give2 by income
+t1<-table(give2, income)
+prop.table(t1)		#tabulate give2 by income, in proportions
+```
+
+Similarly, I will recode the sex and education into dummy variables. 
+I will also recode the income into thousands. 
+```{r}
+female <- as.numeric(charity$sex==2)
+ugrad <- as.numeric(charity$educ==2)
+income2<-income/1000
+```
+
+Now, we will write a logistic regression model with "give2" as a dependent variable, and "age", "female", "ugrad", "income2" and "trust" as dependent variables. 
+
+```{r}
+model1<-glm(give2~ age + female + ugrad + income2 + trust, family=binomial(link=logit))
+summary(model1)
+```
+
+According to the model1, one unit increase in age is associated with, on average, a 0.019 increase in the logit of giving, holding other variables constant. A female is associated with, on average, 0.3 increase in the logit of giving, holding other variables constant. Similarly, education higher than university graduate, on average, is associated with 0.732 increase in the logit of giving, and one unit increase in trust is associated with a 0.513 increase in the logit of giving, net of others, respectively. A one thousand dollar increase in income is associated with a 0.513 increase in the logit of giving, net of others. All independent variables here are statistically significant.  
+
+
+We will interpret the same model results in the odds. 
+```{r}
+exp(model1$coef)
+```
+According to the odds, for every unit increase in age, female, univeristy grad, income and trust, on average, is associated with the increases in the odds of giving by 1.019, 1.350, 2.08, 1.027, 1.671, respectively, holding other variables constant. 
+
+For the percentage change in the odds, the interpretation of the model is the following. 
+```{r}
+delta<-1	
+B<-model1$coef	
+perchange<-100*((exp(B)*delta)-1)
+perchange
+```
+For every unit increase in age, female, ugrad, income2 and trust, the odds of giving increase by 2%, 35%, 107%, 3%, and 67%, respectively and holding other variables constant. 
+
+We will now look at the model fit. 
+```{r}
+logLik(model1) 	
+deviance(model1) 
+n<-2226 
+df<-5
+BIC<-(deviance(model1)) - (df*(log(n)))
+BIC
+```
+Both the deviance and BIC are very high, making me less confident with the model fit. This suspicion is confirmed when we compare the model1 to other models using the likelihood ratio test. 
+
+```{r}
+library(lmtest)
+model2<-glm(give2~income2+age+trust, family=binomial(link=logit))
+model3<-glm(give2~income2+age+trust+female, family=binomial(link=logit))
+lrtest(model1, model2)
+lrtest(model1, model3)
+```

@@ -1,0 +1,16 @@
+---
+title: "Assign7_Choi_Logistic_regression"
+author: "Serena Choi"
+output: html_document
+---
+
+```{r}
+charity <- read.csv("Assign7/charity.csv")
+```
+## Logistic regression 
+
+Examine the factors that determine whether a person gives to charity or not using logistic regression. You’ll need to recode the continuous variable “give” into a binary measure of whether or not a person reports giving to charity.   Code the variable “1” if the respondent reports giving any money to charity and “0” if the respondent does not give to charity. (You will also want to recode the sex and education measures into 0/1 dummy variables to facilitate interpretation).
+
+
+
+Provide a write-up of your results. Show the logistic regression results in a table and interpret your findings.  Interpret your results in a way that highlights the main substantive findings.   What are the determinants of charitable giving?  How do respondents’ propensities to give vary by sex, age, education, trust, and/or income levels?  Use odds ratios, percentage changes in the odds, and/or predicted probabilities to facilitate interpretation. Comment on model fit.
