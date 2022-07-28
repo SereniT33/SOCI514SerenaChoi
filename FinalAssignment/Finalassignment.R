@@ -4,12 +4,13 @@
 # Green equity: does social vulnerability affect the distribution of green space? Case from Vancouver
 #
 ##################################################
-
-library(tidyverse)
 library(plyr)
+library(tidyverse)
 library(janitor)
 park <- read.csv(file="~/Desktop/MCRP Terms/Y2022Winter/Soci514/SOCI514SerenaChoi/FinalAssignment/park.csv")
 local <- read.csv(file="~/Desktop/MCRP Terms/Y2022Winter/Soci514/SOCI514SerenaChoi/FinalAssignment/local.csv", check.names=FALSE)
+edu <- read.csv(file="~/Desktop/MCRP Terms/Y2022Winter/Soci514/SOCI514SerenaChoi/FinalAssignment/Education_da.csv", check.names=FALSE)
+
 
 ## cleaning data frame
 park <- subset(park, select = -OBJECTID)
@@ -18,7 +19,6 @@ local <- local %>%
   filter(Variable!='') %>%
   filter(ID %in% c(1, 27, 53, 1904:1919, 3080:3081)) %>%
   unite(variable, c("ID", "Variable"))
-
 local$variable <- recode(local$variable,"1_Total - Age groups and average age of the population - 100% data" = "total_pop")
   local$variable <-recode(local$variable,"27_Total - Age groups and average age of males - 100% data" ="male")
   local$variable <-recode(local$variable,"53_Total - Age groups and average age of females - 100% data" = "female")
@@ -49,6 +49,32 @@ colnames(local)
 
 ## joining
 park_local <- join(park,local, by="name")
+
+## cleaning dataframe (2) education
+colnames(edu)
+education <- edu %>%
+  dplyr::rename(total_edu = vT_H2,
+                LH = v_Ncd,
+                H =vS_sd,
+                PS =v_Pcd)
+education <- subset(education, select = -c(OBJECTID, Join_Count, TARGET_FID, GeUID,
+                                           Type, CD_UI, CSD_U, CT_UI, CMA_U,
+                                           Shape_Area, Shape_Length,
+                                           RgnNm, Ar_s_, ShpAr))
+edu_sum <- education %>%
+  group_by(name) %>%
+  summarise(
+    Ppltn = sum(Ppltn),
+    Hshld = sum(Hshld),
+    Dwlln = sum(Dwlln),
+    total_edu = sum(total_edu),
+    LH = sum(LH),
+    H = sum(H),
+    PS = sum(PS))
+
+
+
+
 
 ## creating and recoding columns
 park_local %>%
