@@ -59,7 +59,7 @@ education <- edu %>%
                 PS =v_Pcd)
 education <- subset(education, select = -c(OBJECTID, Join_Count, TARGET_FID, GeUID,
                                            Type, CD_UI, CSD_U, CT_UI, CMA_U,
-                                           Shape_Area, Shape_Length,
+                                          Shape_Area, Shape_Length,
                                            RgnNm, Ar_s_, ShpAr))
 edu_sum <- education %>%
   group_by(name) %>%
@@ -72,13 +72,37 @@ edu_sum <- education %>%
     H = sum(H),
     PS = sum(PS))
 
+#join datasets (2)
+local_profiles <- join(park_local,edu_sum, by="name")
+
+## creating and recoding columns, park_service and normalizing other variables
+local_profiles$total_pop <- gsub(",","", local_profiles$total_pop)
+local_profiles <- local_profiles %>%
+  mutate(park_service = 1000 * SUM_area_ha /as.numeric(total_pop)) %>%
+  mutate(MALE = as.numeric(male) / as.numeric(total_pop) * 100) %>%
+  mutate(FEMALE = as.numeric(female) / as.numeric(total_pop) * 100) %>%
+  mutate(INCOME_WOI = as.numeric(without_income) / as.numeric(total_income_group) * 100) %>%
+  mutate(INCOME_WI = as.numeric(with_income) / as.numeric(total_income_group) * 100) %>%
+  mutate(INCOME_L10K = as.numeric(under_10k) / as.numeric(total_income_group) * 100) %>%
+  mutate(INCOME_L20K = as.numeric(`10_19k`) / as.numeric(total_income_group) * 100) %>%
+  mutate(INCOME_L30K = as.numeric(`20_29k`) / as.numeric(total_income_group) * 100) %>%
+  mutate(INCOME_L40K = as.numeric(`30_39k`) / as.numeric(total_income_group) * 100) %>%
+  mutate(INCOME_L50K = as.numeric(`40_49k`) / as.numeric(total_income_group) * 100) %>%
+  mutate(INCOME_L60K = as.numeric(`50_59k`) / as.numeric(total_income_group) * 100) %>%
+  mutate(INCOME_L70K = as.numeric(`60_69k`) / as.numeric(total_income_group) * 100) %>%
+  mutate(INCOME_L80K = as.numeric(`70_79k`) / as.numeric(total_income_group) * 100) %>%
+  mutate(INCOME_L90K = as.numeric(`80_89k`) / as.numeric(total_income_group) * 100) %>%
+  mutate(INCOME_L100K = as.numeric(`90_99k`) / as.numeric(total_income_group) * 100) %>%
+  mutate(INCOME_H100K = as.numeric(over_100k) / as.numeric(total_income_group) * 100) %>%
+  mutate(INCOME_L150K = as.numeric(`100_140k`) / as.numeric(total_income_group) * 100) %>%
+  mutate(INCOME_H150K = as.numeric(over_150k) / as.numeric(total_income_group) * 100) %>%
+  mutate(RACE = as.numeric(race) / as.numeric(total_race) * 100) %>%
+  mutate(EDU_LH = as.numeric(LH) / as.numeric(total_edu) * 100) %>%
+  mutate(EDU_H = as.numeric(H) / as.numeric(total_edu) * 100) %>%
+  mutate(EDU_PS = as.numeric(PS) / as.numeric(total_edu) * 100)
 
 
 
-
-## creating and recoding columns
-park_local %>%
-  mutate(park_service = 1000 * SUM_area_ha /  )
 
 ## Research questions
 
