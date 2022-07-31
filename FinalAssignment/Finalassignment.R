@@ -60,7 +60,7 @@ education <- edu %>%
 education <- subset(education, select = -c(OBJECTID, Join_Count, TARGET_FID, GeUID,
                                            Type, CD_UI, CSD_U, CT_UI, CMA_U,
                                           Shape_Area, Shape_Length,
-                                           RgnNm, Ar_s_, ShpAr))
+                                           RgnNm,ShpAr))
 edu_sum <- education %>%
   group_by(name) %>%
   summarise(
@@ -70,7 +70,8 @@ edu_sum <- education %>%
     total_edu = sum(total_edu),
     LH = sum(LH),
     H = sum(H),
-    PS = sum(PS))
+    PS = sum(PS),
+    Area = sum(Ar_s_))
 
 #join datasets (2)
 local_profiles <- join(park_local,edu_sum, by="name")
@@ -99,140 +100,90 @@ local_profiles <- local_profiles %>%
   mutate(RACE = as.numeric(race) / as.numeric(total_race) * 100) %>%
   mutate(EDU_LH = as.numeric(LH) / as.numeric(total_edu) * 100) %>%
   mutate(EDU_H = as.numeric(H) / as.numeric(total_edu) * 100) %>%
-  mutate(EDU_PS = as.numeric(PS) / as.numeric(total_edu) * 100)
-
-
-
+  mutate(EDU_PS = as.numeric(PS) / as.numeric(total_edu) * 100) %>%
+  mutate(DENSITY = as.numeric(total_pop) / as.numeric(Area))
 
 ## Research questions
 
-## Definitions
 
-1. According to the City of Vancouver, *green spaces* include parks, community gardens and greenways.
+## Building models
+#treating education & income as categorical variables with
+#EDUC_H and INCOME_L70K as referent. Included FEMALE.
+model_all_variables <-
+  lm(park_service ~ EDU_LH + EDU_PS +
+       INCOME_L10K + INCOME_L20K + INCOME_L30K + INCOME_L40K +
+       INCOME_L50K + INCOME_L60K + INCOME_L80K + INCOME_L90K + INCOME_L100K +
+       INCOME_L150K + INCOME_H150K + RACE + FEMALE + DENSITY,
+     data = local_profiles)
+summary(model_all_variables)
 
+model_all_variables_interaction <-
+  lm(park_service ~ EDU_LH + EDU_PS +
+       INCOME_L10K + INCOME_L20K + INCOME_L30K + INCOME_L40K +
+       INCOME_L50K + INCOME_L60K + INCOME_L80K + INCOME_L90K + INCOME_L100K +
+       INCOME_L150K + INCOME_H150K + RACE + FEMALE + DENSITY +
+       (EDU_LH : INCOME_L10K) + (EDU_LH : INCOME_L20K) + (EDU_LH : INCOME_L30K) +
+       # (EDU_LH : INCOME_L40K) + (EDU_LH : INCOME_L50K) + (EDU_LH : INCOME_L60K) +
+       # (EDU_LH : INCOME_L70K) +(EDU_LH : INCOME_L80K) + (EDU_LH : INCOME_L90K) +
+      # (EDU_LH : INCOME_L100K) + (EDU_LH : INCOME_L150K) + (EDU_LH : INCOME_H150K) +
+        # (EDU_PS : INCOME_L10K) + (EDU_PS : INCOME_L20K) + (EDU_PS : INCOME_L30K) +
+        # (EDU_PS : INCOME_L40K) + (EDU_PS : INCOME_L50K) + (EDU_PS : INCOME_L60K) +
+        # (EDU_PS : INCOME_L70K) +(EDU_PS : INCOME_L80K) + (EDU_PS : INCOME_L90K) +
+       # (EDU_PS : INCOME_L100K) + (EDU_PS : INCOME_L150K) + (EDU_PS : INCOME_H150K) ,
+        # (RACE : INCOME_L10K) + (RACE : INCOME_L20K) + (RACE : INCOME_L30K) ,
+        #(RACE : INCOME_L40K) + (RACE : INCOME_L50K) + (RACE : INCOME_L60K) ,
+        #(RACE : INCOME_L70K) +(RACE : INCOME_L80K) + (RACE : INCOME_L90K) ,
+       # (RACE : INCOME_L100K) + (RACE : INCOME_L150K) + (RACE : INCOME_H150K) ,
+       # (FEMALE : INCOME_L10K) + (FEMALE : INCOME_L20K) + (FEMALE : INCOME_L30K) ,
+        # (FEMALE : INCOME_L40K) + (FEMALE : INCOME_L50K) + (FEMALE : INCOME_L60K) ,
+        # (FEMALE : INCOME_L70K) +(FEMALE : INCOME_L80K) + (FEMALE : INCOME_L90K) ,
+        # (FEMALE : INCOME_L100K) + (FEMALE : INCOME_L150K) + (FEMALE : INCOME_H150K) ,
+       (RACE : FEMALE) ,
+       # (EDU_LH : FEMALE) ,
+        # (EDU_PS : FEMALE) ,
+       # (EDU_LH : RACE) ,
+      # (EDU_PS : RACE) ,
+       # (DENSITY : INCOME_L10K) + (DENSITY : INCOME_L20K) + (DENSITY : INCOME_L30K) ,
+        # (DENSITY : INCOME_L40K) + (DENSITY : INCOME_L50K) + (DENSITY : INCOME_L60K) ,
+       # (DENSITY : INCOME_L70K) +(DENSITY : INCOME_L80K) + (DENSITY : INCOME_L90K) ,
+        #(DENSITY : INCOME_L100K) + (DENSITY : INCOME_L150K) + (DENSITY : INCOME_H150K),
+     data = local_profiles)
+summary(model_all_variables_interaction)
 
+### Write this up - you learned than normalizing your data reduced the vif
+car::vif(lm(park_service ~ as.numeric(LH) + as.numeric(PS) +
+              as.numeric(under_10k) + as.numeric(`10_19k`) + as.numeric(`20_29k`) +
+              as.numeric(`30_39k`) + as.numeric(`40_49k`) + as.numeric(`50_59k`) +
+              as.numeric(`70_79k`) + as.numeric(`80_89k`) + as.numeric(`90_99k`) +
+              as.numeric(`100_140k`) + as.numeric(over_150k) +
+              as.numeric(female) + as.numeric(DENSITY),
+            data = local_profiles))
 
+car::vif(lm(park_service ~ as.numeric(LH) + as.numeric(PS) +
+              as.numeric(under_10k) + as.numeric(`10_19k`) + as.numeric(`20_29k`) +
+              as.numeric(`30_39k`) + as.numeric(`40_49k`) + as.numeric(`50_59k`) +
+              as.numeric(`70_79k`) + as.numeric(`80_89k`) + as.numeric(`90_99k`) +
+              as.numeric(`100_140k`) + as.numeric(over_150k) +
+              as.numeric(female) + as.numeric(DENSITY),
+            data = local_profiles))
 
-# First off, we need to tell R to look in the right
-# directory.
-#
-# File -> Change dir
-setwd("C:/Users/User/OneDrive/Teaching/Soci514/data/TXT")
-
-dir()      # see if the data is in the working directory
-
-oecd <- read.table("oecd.txt", header=T)  # load the data
-
-
-# Let's take a look at what this object contains
-names(oecd)
-
-# Let's make the oecd the default data set
-attach(oecd)
-
-#Take a look at summary statistics:
-
-summary(oecd)
-
-#Recall that R uses an object-oriented framework; it uses objects to store information
-
-object1 <- mean(decom)
-object1
-
-object2 <- min(decom)
-object2
-
-object3 <- max(decom)
-object3
-
-
-#-------------------------------------------------#
-#          Bivariate Regression                   #
-#-------------------------------------------------#
-
-# Let's examine the relationship between gdp and decom:
-
-plot(gdp, decom)
-
-# To obtain a slope estimate summarizing the relationship between x and y,
-# we use the following equation: cov(x,y)/var(x)
-
-#Let's compute a slope, B1 for the relationship between gdp (x) and decom (y):
-cov(gdp, decom)/var(gdp)
-B1<-cov(gdp, decom)/var(gdp)
-
-#Now let's compute the intercept, B0 = ybar - B1 * xbar
-
-mean(decom) - (B1*mean(gdp))
-B0 <- mean(decom) - (B1*mean(gdp))
-B0
-
-#Let's plot this linear relationship:
-plot(gdp, decom)
-abline(a=10.04, b=1.56, col="blue")  # a=intercept, b=slope
-
-
-# We can also obtain slope and intercept estimates using a pre-packaged R function.
-# The function for linear regression is lm(y ~ x1).
-# See help(lm) for more details.  Here is an example:
-
-lm(decom ~ gdp, data=oecd)
-
-# Since we told R to use the oecd dataset for all operations
-# we don't need to include the data command in the model statement.
+#what if I use non-normalized variables?
+model_all_variables_normalized <-
+  lm(park_service ~ as.numeric(LH) + as.numeric(PS) +
+       as.numeric(under_10k) + as.numeric(`10_19k`) + as.numeric(`20_29k`) +
+       as.numeric(`30_39k`) + as.numeric(`40_49k`) + as.numeric(`50_59k`) +
+       as.numeric(`70_79k`) + as.numeric(`80_89k`) + as.numeric(`90_99k`) +
+       as.numeric(`100_140k`) + as.numeric(over_150k) +
+       as.numeric(female) + as.numeric(DENSITY),
+     data = local_profiles)
+summary(model_all_variables_normalized)
 
 
-lm(decom ~ gdp)
+# ###
 
-
-# Now let's take advantage of R's object-oriented framework
-
-model1 <- lm(decom ~ gdp)  #estimate the regression, assign output to an object "model1"
-
-# Take a look at the objects in model1.
-
-model1
-summary(model1)
-
-# How do we interpret the slope for gdp?
-# Evaluate the null hypothesis that B1 = 0.
-# What can we conclude about the relationship between gdp and decom?
-
-# We can also look at the residuals
-
-residuals(model1)
-
-resid<-residuals(model1)
-plot(resid, type="n")
-text(resid, labels=(country))
-
-#What countries have big (absolute) residuals?
-#What countries have small residuals?
-#What does this mean in terms of model fit?
-
-#-------------------------------------------------#
-#             WRITING TO FILES                    #
-#-------------------------------------------------#
-
-
-# Regression results are much easier to interpret when they are
-# formatted into nice tables.  This can be done with
-# any spreadsheet program (e.g. MS Excel).
-# You can always copy and paste your output directly
-# from R, but it is often easier to write the results
-# directly to a spreadsheet program for manipulation.
-
-#Here's a function that creates a csv file from your
-#regression output.
-tocsv <- function(model, filename){
-  model.summary <- summary(model)
-  coefs   <- model.summary$coefficients
-  write.csv(coefs, file=filename)
-}
-
-# Now lets use this function to save the results.
-tocsv(model1, "Model1.csv")
-
-
-
+subset_local_profiles <- subset(local_profiles, select = c(park_service, EDU_LH, EDU_PS, INCOME_L10K,
+                                                           INCOME_L20K, INCOME_L30K, INCOME_L40K, INCOME_L50K,
+                                                           INCOME_L60K, INCOME_L80K, INCOME_L90K, INCOME_L100K,
+                                                           INCOME_L150K, INCOME_H150K, RACE, FEMALE, DENSITY))
+plot(cor(subset_local_profiles))
 
