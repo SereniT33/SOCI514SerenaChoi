@@ -7,10 +7,11 @@
 library(plyr)
 library(tidyverse)
 library(janitor)
+library(car)
 park <- read.csv(file="~/Desktop/MCRP Terms/Y2022Winter/Soci514/SOCI514SerenaChoi/FinalAssignment/park.csv")
 local <- read.csv(file="~/Desktop/MCRP Terms/Y2022Winter/Soci514/SOCI514SerenaChoi/FinalAssignment/local.csv", check.names=FALSE)
 edu <- read.csv(file="~/Desktop/MCRP Terms/Y2022Winter/Soci514/SOCI514SerenaChoi/FinalAssignment/Education_da.csv", check.names=FALSE)
-
+DA_park <-read.csv(file="~/Desktop/MCRP Terms/Y2022Winter/Soci514/SOCI514SerenaChoi/FinalAssignment/DA_park.csv", check.names=FALSE)
 
 ## cleaning data frame
 park <- subset(park, select = -OBJECTID)
@@ -187,3 +188,201 @@ subset_local_profiles <- subset(local_profiles, select = c(park_service, EDU_LH,
                                                            INCOME_L150K, INCOME_H150K, RACE, FEMALE, DENSITY))
 plot(cor(subset_local_profiles))
 
+
+
+# from using neighborhood level data, I realized that the collinearity happens due to too few observations.
+#Hence, I looked at data divided by a smaller geographical unit, dissemination area.
+#Here's the new dataset, "DA_park", which shows census data and park distribution per dissemination area.
+
+DA_park_census <- subset(DA_park,
+                         select = c("LH", "PS", "POP", "DENSI", "AREA", "INCOM",
+                                    "ttl_r", "VM", "ABO", "AGE", "SUM_Area_SQUAREKILOMETERS"))
+
+summary(DA_park_census)
+
+
+
+#BIVARIATE MODELS
+##1.
+bivariate_LH <- lm(SUM_Area_SQUAREKILOMETERS ~ LH,
+                     data = DA_park_census)
+summary(bivariate_LH)
+plot_bivariate_LH <- ggplot(DA_park_census,
+                            aes(x = LH, y = SUM_Area_SQUAREKILOMETERS)) +
+  geom_point()
+print(plot_bivariate_LH)
+###LH direction: negative; not significant; Adj. R is negative so terrible fit.
+
+##2.
+bivariate_PS <- lm(SUM_Area_SQUAREKILOMETERS ~ PS,
+                   data = DA_park_census)
+summary(bivariate_PS)
+plot_bivariate_PS <- ggplot(DA_park_census,
+                            aes(x = PS, y = SUM_Area_SQUAREKILOMETERS)) +
+  geom_point()
+print(plot_bivariate_PS)
+### PS direction: positive; marginally significant at 0.1 level (=-.111);
+### Adj. R is 0.002; still a bad fit.
+
+##3.
+bivariate_INCOM <- lm(SUM_Area_SQUAREKILOMETERS ~ INCOM,
+                   data = DA_park_census)
+summary(bivariate_INCOM)
+plot_bivariate_INCOM <- ggplot(DA_park_census,
+                            aes(x = INCOM, y = SUM_Area_SQUAREKILOMETERS)) +
+  geom_point()
+print(plot_bivariate_INCOM)
+### INCOM direction: positive; not significant; negative Adj. R = terrible
+
+##4.
+bivariate_VM <- lm(SUM_Area_SQUAREKILOMETERS ~ VM,
+                      data = DA_park_census)
+summary(bivariate_VM)
+plot_bivariate_VM <- ggplot(DA_park_census,
+                               aes(x = VM, y = SUM_Area_SQUAREKILOMETERS)) +
+  geom_point()
+print(plot_bivariate_VM)
+### VM direction: positive; not significant; negative Adj. R = terrible
+
+##5.
+bivariate_ABO <- lm(SUM_Area_SQUAREKILOMETERS ~ ABO,
+                   data = DA_park_census)
+summary(bivariate_ABO)
+plot_bivariate_ABO <- ggplot(DA_park_census,
+                            aes(x = ABO, y = SUM_Area_SQUAREKILOMETERS)) +
+  geom_point()
+print(plot_bivariate_ABO)
+### ABO direction: positive (close to 0); not significant; negative Adj. R = terrible
+
+##6.
+bivariate_AGE <- lm(SUM_Area_SQUAREKILOMETERS ~ AGE,
+                    data = DA_park_census)
+summary(bivariate_AGE)
+plot_bivariate_AGE <- ggplot(DA_park_census,
+                             aes(x = AGE, y = SUM_Area_SQUAREKILOMETERS)) +
+  geom_point()
+print(plot_bivariate_AGE)
+### AGE direction: positive (close to 0); SIGNIFICANT; Adj. R = 0.004 ~ bad
+
+##6.
+bivariate_DENSI <- lm(SUM_Area_SQUAREKILOMETERS ~ DENSI,
+                    data = DA_park_census)
+summary(bivariate_DENSI)
+plot_bivariate_DENSI<- ggplot(DA_park_census,
+                             aes(x = DENSI, y = SUM_Area_SQUAREKILOMETERS)) +
+  geom_point()
+print(plot_bivariate_DENSI)
+### DENSI direction: negative; SIGNIFICANT; Adj. R = 0.004 ~ bad
+
+
+
+#buidling simple linear model
+model_park_edu <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + DENSI,
+                     data = DA_park_census)
+summary(model_park_edu)
+#
+
+#Interpretation (1) the coefficient for LH is negative and the other for PS is positive as expected.
+#(2) PS is statistically significant at 0.05 level; density is significant at 0.01 level.
+#(3) Adjusted R-squared is very low; model is not a good fit.
+
+
+model_park_edu_income <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + INCOM + DENSI,
+                            data = DA_park_census)
+summary(model_park_edu_income)
+#Interpretation (1) direction of the coefficients are negative, positive, positive, negative.
+#(2) PS is statistically significant at 0.05 level; density at 0.01 level. Income is not significant.
+#(3) Adjusted R squared is little better than the last model but still very low; model is not a good fit.
+
+
+plot_INCOM_park <- ggplot(DA_park_census, aes(x = INCOM, y = SUM_Area_SQUAREKILOMETERS)) +
+  geom_point()
+print(plot_INCOM_park)
+
+model_park_edu_income_age <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + INCOM + + AGE + DENSI,
+                            data = DA_park_census)
+summary(model_park_edu_income_age)
+#Interpretation (1) direction of the coefficients are negative, positive, positive, positive, negative.
+#(2) PS and AGE are statistically significant at 0.05 level; density at 0.01 level. Income is not significant.
+#(3) Adjusted R squared (0.012) is little better than the last model but still very low; model is not a good fit.
+
+
+
+model_park_all <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + INCOM + AGE + VM + ABO + DENSI,
+     data = DA_park_census)
+summary(model_park_all)
+#Interpretation (1) direction of the coefficients are negative, positive, negative, positive, negative, positive.
+#As the income coefficient changed the direction, it does not make sense. maybe dropping ABO?
+#(2) PS and AGE are statistically significant at 0.05 level; density at 0.01 level. Others are not.
+#(3) Adjusted R squared (0.011) is worse.
+
+
+model_park_vm <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + INCOM + AGE + VM + DENSI,
+                    data = DA_park_census, y = TRUE, x=TRUE)
+summary(model_park_vm)
+#Interpretation (1)different directions -> LH become - and income stays -, which is counter-intuitive.
+#(2)significance stays the same.
+#(3)Adjusted R squared is 0.013.
+
+plot_VM_INCOM <- ggplot(DA_park_census, aes(x = VM, y = INCOM)) +
+  geom_point()
+print(plot_VM_INCOM)
+
+
+
+model_edu_income_int <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + INCOM + DENSI +
+                           LH:INCOM + PS:INCOM,
+                         data = DA_park_census)
+summary(model_edu_income_int)
+
+
+
+model_edu_income_age_int <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + INCOM + AGE + DENSI +
+                             LH:INCOM + PS:INCOM +INCOM:AGE,
+                           data = DA_park_census)
+summary(model_edu_income_age_int)
+
+
+
+model_edu_income_age_race_int <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + INCOM + AGE + VM + ABO + DENSI +
+                                 LH:INCOM + PS:INCOM + INCOM:AGE + LH:VM + LH:ABO + PS:VM + PS:ABO +
+                                   INCOM:VM + INCOM:ABO +DENSI,
+                               data = DA_park_census)
+summary(model_edu_income_age_race_int)
+
+#collinearity?
+vif(model_park_vm)
+# no strong collinearity
+
+##Checking model assumptions
+###1. model muist be correctly specified: direction of causality; linear; no omitted variables
+###2. errors are indipendently normally distributed.
+stand.res <- stdres(model_park_vm)  # standardized residuals
+qqnorm((stand.res),
+       ylab="Standardized Residuals",
+       xlab="Theoretical Quantiles",
+       main="QQ plot of Standardized Residuals")
+qqline((stand.res), col="magenta")
+
+
+###3. the mean of the errors is 0.
+mean(stand.res)
+plot(stand.res)
+abline(h=mean(stand.res), col="red")
+abline(h=0, col="blue")
+####it is very close to zero. This assumption is not violated and
+####the intercept is not biased.
+
+###4. the variance of the errors is constant across cases.
+plot(fitted(model_park_vm), stand.res[1:length(fitted(model_park_vm))],
+     xlab="Fitted Values of y",
+     ylab="Standardized Residuals",
+     main="Std. Residuals vs. Fitted Values for the model")
+abline(h=0, col="red")
+libary(lmtest)
+bptest(model_park_vm)
+#### As p-value is large, we cannot reject the null hypothesis.
+####Therefore, we can conclude that the variance of the errors
+####is constant across cases, and the assumption is not violated.
+
+###5. the error is unrelated to all of the independent variables.

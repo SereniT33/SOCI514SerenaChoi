@@ -1,6 +1,7 @@
 install.packages("cancensus")
 install.packages("sf")
 install.packages("geojsonsf")
+install.packages("xmlconvert")
 
 
 library(cancensus)
@@ -10,6 +11,7 @@ library(tidyverse)
 library(dplyr)
 library(sf)
 library(geojsonsf)
+library(xmlconvert)
 
 set_api_key("CensusMapper_330652d5ae9c2ccaafc7883a06fb3967", install=TRUE)
 
@@ -103,6 +105,7 @@ geo_census_data_da <- geo_census_data_da %>%
   rename(ABO = "v_CA16_3855: Aboriginal identity") %>%
   rename(AGE = "v_CA16_379: Average age")
 
+st_write(geo_census_data_da, "geo_census_data_da.shp")
 
 #cleaning the dataset
 census_data_da <- census_data_da %>%
@@ -121,3 +124,4 @@ census_data_da <- census_data_da %>%
 census_DA <- subset(census_data_da,
                     select = c(total_edu,LH, PS, POP, DENSITY, AREA, INCOME, total_race, VM, ABO, AGE))
 
+park_per_DA <- xml_to_df("~/Desktop/MCRP Terms/Y2022Winter/Soci514/SOCI514SerenaChoi/FinalAssignment/Park_per_DA.csv.xml", records.tag = "datarecord", fields="attributes")
