@@ -211,6 +211,12 @@ plot_bivariate_LH <- ggplot(DA_park_census,
                             aes(x = LH, y = SUM_Area_SQUAREKILOMETERS)) +
   geom_point()
 print(plot_bivariate_LH)
+
+plot(DA_park_census$LH, DA_park_census$SUM_Area_SQUAREKILOMETERS,
+     pch = 16, cex = 1.3, col = "blue",
+     main = "PARK PLOTTED AGAINST LH", xlab = "LH (people)", ylab = "Park (sq.km)")
+abline(lm(SUM_Area_SQUAREKILOMETERS ~ LH,
+          data = DA_park_census))
 ###LH direction: negative; not significant; Adj. R is negative so terrible fit.
 
 ##2.
@@ -221,6 +227,12 @@ plot_bivariate_PS <- ggplot(DA_park_census,
                             aes(x = PS, y = SUM_Area_SQUAREKILOMETERS)) +
   geom_point()
 print(plot_bivariate_PS)
+
+plot(DA_park_census$PS, DA_park_census$SUM_Area_SQUAREKILOMETERS,
+     pch = 16, cex = 1.3, col = "blue",
+     main = "PARK PLOTTED AGAINST PS", xlab = "PS (people)", ylab = "Park (sq.km)")
+abline(lm(SUM_Area_SQUAREKILOMETERS ~ PS,
+          data = DA_park_census))
 ### PS direction: positive; marginally significant at 0.1 level (=-.111);
 ### Adj. R is 0.002; still a bad fit.
 
@@ -232,6 +244,12 @@ plot_bivariate_INCOM <- ggplot(DA_park_census,
                             aes(x = INCOM, y = SUM_Area_SQUAREKILOMETERS)) +
   geom_point()
 print(plot_bivariate_INCOM)
+
+plot(DA_park_census$INCOM, DA_park_census$SUM_Area_SQUAREKILOMETERS,
+     pch = 16, cex = 1.3, col = "blue",
+     main = "PARK PLOTTED AGAINST INCOM", xlab = "INCOM ($)", ylab = "Park (sq.km)")
+abline(lm(SUM_Area_SQUAREKILOMETERS ~ INCOM,
+          data = DA_park_census))
 ### INCOM direction: positive; not significant; negative Adj. R = terrible
 
 ##4.
@@ -242,6 +260,11 @@ plot_bivariate_VM <- ggplot(DA_park_census,
                                aes(x = VM, y = SUM_Area_SQUAREKILOMETERS)) +
   geom_point()
 print(plot_bivariate_VM)
+plot(DA_park_census$VM, DA_park_census$SUM_Area_SQUAREKILOMETERS,
+     pch = 16, cex = 1.3, col = "blue",
+     main = "PARK PLOTTED AGAINST VM", xlab = "VM (persons)", ylab = "Park (sq.km)")
+abline(lm(SUM_Area_SQUAREKILOMETERS ~ VM,
+          data = DA_park_census))
 ### VM direction: positive; not significant; negative Adj. R = terrible
 
 ##5.
@@ -277,87 +300,383 @@ print(plot_bivariate_DENSI)
 
 
 #buidling simple linear model
-model_park_edu <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + DENSI,
+Model_1 <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + AGE + DENSI,
                      data = DA_park_census)
-summary(model_park_edu)
+summary(Model_1)
 #
 
-#Interpretation (1) the coefficient for LH is negative and the other for PS is positive as expected.
-#(2) PS is statistically significant at 0.05 level; density is significant at 0.01 level.
+#Interpretation (1) the coefficients: - for LH and DENSI, + for PS and AGE
+#(2) AGE is statistically significant at 0.05 level; PS & density are significant at 0.01 level.
 #(3) Adjusted R-squared is very low; model is not a good fit.
 
 
-model_park_edu_income <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + INCOM + DENSI,
+Model_2 <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + INCOM + AGE + DENSI,
                             data = DA_park_census)
-summary(model_park_edu_income)
-#Interpretation (1) direction of the coefficients are negative, positive, positive, negative.
-#(2) PS is statistically significant at 0.05 level; density at 0.01 level. Income is not significant.
-#(3) Adjusted R squared is little better than the last model but still very low; model is not a good fit.
-
+summary(Model_2)
+#Interpretation
+#(1) coefficients: - for LH and DENSI; + for PS, INCOM, AGE
+#(2) PS and AGE statistically significant at 0.05 level; density at 0.01 level. Income is not significant.
+#(3) Adjusted R squared is worse!!
 
 plot_INCOM_park <- ggplot(DA_park_census, aes(x = INCOM, y = SUM_Area_SQUAREKILOMETERS)) +
   geom_point()
 print(plot_INCOM_park)
 
-model_park_edu_income_age <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + INCOM + + AGE + DENSI,
-                            data = DA_park_census)
-summary(model_park_edu_income_age)
-#Interpretation (1) direction of the coefficients are negative, positive, positive, positive, negative.
-#(2) PS and AGE are statistically significant at 0.05 level; density at 0.01 level. Income is not significant.
-#(3) Adjusted R squared (0.012) is little better than the last model but still very low; model is not a good fit.
 
-
-
-model_park_all <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + INCOM + AGE + VM + ABO + DENSI,
+Model_3 <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + INCOM + VM + AGE + DENSI,
      data = DA_park_census)
-summary(model_park_all)
-#Interpretation (1) direction of the coefficients are negative, positive, negative, positive, negative, positive.
-#As the income coefficient changed the direction, it does not make sense. maybe dropping ABO?
+summary(Model_3)
+#Interpretation
+#(1) coefficients are positive for LH, PS, AGE; negative for INCOM, DENSI
+#LH & income coefficient changed the direction, it does not make sense.
 #(2) PS and AGE are statistically significant at 0.05 level; density at 0.01 level. Others are not.
-#(3) Adjusted R squared (0.011) is worse.
+#(3) Adjusted R squared (0.0125) is a little better than model 2, but worse than model1.
 
 
-model_park_vm <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + INCOM + AGE + VM + DENSI,
+Model_4 <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + INCOM  + VM + ABO + AGE + DENSI,
                     data = DA_park_census, y = TRUE, x=TRUE)
-summary(model_park_vm)
-#Interpretation (1)different directions -> LH become - and income stays -, which is counter-intuitive.
+summary(Model_4)
+#Interpretation
+#(1)coefficients are negative for LH, income, VM and DENSI; positive for PS, ABo and AGE
+#direction for LH changed back to - => makes sense
+#direction for income stays - => why?
+#direction for ABO is +
 #(2)significance stays the same.
-#(3)Adjusted R squared is 0.013.
+#(3)Adjusted R squared is worse.
 
 plot_VM_INCOM <- ggplot(DA_park_census, aes(x = VM, y = INCOM)) +
   geom_point()
 print(plot_VM_INCOM)
 
+#incremental F test
+anova(Model_1, Model_2)
+# -> fail to reject the null hypothesis;
+# adding INCOM does not significantly improve the fit of the model.
 
+anova(Model_2, Model_3)
+# fail to reject; adding VM does not improve
 
-model_edu_income_int <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + INCOM + DENSI +
-                           LH:INCOM + PS:INCOM,
-                         data = DA_park_census)
-summary(model_edu_income_int)
-
-
-
-model_edu_income_age_int <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + INCOM + AGE + DENSI +
-                             LH:INCOM + PS:INCOM +INCOM:AGE,
-                           data = DA_park_census)
-summary(model_edu_income_age_int)
+anova(Model_3, Model_4)
+# fail to reject; adding VM does not improve
 
 
 
-model_edu_income_age_race_int <- lm(SUM_Area_SQUAREKILOMETERS ~ LH + PS + INCOM + AGE + VM + ABO + DENSI +
-                                 LH:INCOM + PS:INCOM + INCOM:AGE + LH:VM + LH:ABO + PS:VM + PS:ABO +
-                                   INCOM:VM + INCOM:ABO +DENSI,
-                               data = DA_park_census)
-summary(model_edu_income_age_race_int)
+#INTERACTION EFFECTS
+Model_5 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                LH:PS,
+              data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_5)
+#Interpretation
+#(1)coefficients: positive for LH, PS, ABO, AGE;
+#negative for INCOM, VM, DENSI, LH:PS
+#LH changed to +; why?
+#(2)LH:PS significant at 0.05; AGE at 0.01; PS and DENSI at 0.001
+#(3)Adj. R is much better (0.01729)
+
+anova(Model_4, Model_5)
+#reject the null hypothesis; adding LH:PS improves the model fit!
+
+Model_6 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                LH:PS + LH:INCOM,
+              data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_6)
+#Interpretation
+#(1)coefficients: positive for PS, ABO, AGE, LH:INCOM;
+#negative for LH, INCOM, VM, DENSI, LH:PS
+#LH is back to - (yahoo!)
+#(2)PS, AGE and LH:PS significant at 0.01; DENSI at 0.001
+#(3)Adj. R is little worse (0.01701)
+
+anova(Model_5, Model_6)
+#cannot reject the null hypothesis;
+#adding LH:INCOM does not improves the model fit
+
+
+
+Model_7 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                LH:PS +
+                PS:INCOM,
+              data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_7)
+#Interpretation
+#(1) coefficients + for LH, PS, INCOM, ABO, AGE;
+# - for VM, DENSI, LH:PS, PS:INCOM
+#(2) LH:PS and PS:INCOM statistically significant at 0.1 level;
+#PS and AGE at 0.05 level; DENSI at 0.01 level
+#(3) Adj. R = 0.019; better!
+
+anova(Model_5, Model_7)
+#marginally significant at 0.1 level
+#may reject the null and therefore, adding PS:INCOM
+
+
+
+
+#Model_8 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                #LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                #LH:PS +  PS:INCOM,
+              #data = DA_park_census, y = TRUE, x=TRUE)
+#summary(Model_8)
+#Interpretation
+#(1) coefficients + for LH, PS, INCOM, ABO, AGE;
+# - for VM, DENSI, LH:PS, PS:INCOM
+#(2) LH:PS and PS:INCOM statistically significant at 0.1 level;
+#PS and AGE at 0.05 level; DENSI at 0.01 level
+#(3) Adj. R = 0.019; better!
+#anova(Model_5, Model_8)
+#marginally significant at 0.1 level;therefore, adding PS:INCOM works
+#==> model 7 and model 8 is the same
+
+Model_9 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                LH:PS +  PS:INCOM + VM : INCOM,
+              data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_9)
+#Interpretation
+
+
+anova(Model_8, Model_9)
+#cannot reject the null; adding VM:INCOM x
+
+
+Model_10 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                LH:PS +  PS:INCOM + ABO : INCOM,
+              data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_10)
+
+anova(Model_8, Model_10)
+#cannot reject the null; adding ABO : INCOM x
+
+
+Model_11 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                 LH:PS +  PS:INCOM + AGE : INCOM,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_11)
+
+anova(Model_8, Model_11)
+#cannot reject the null; adding AGE : INCOM x
+
+
+Model_12 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                 LH:PS +  PS:INCOM + DENSI : INCOM,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_12)
+
+anova(Model_8, Model_12)
+#cannot reject the null; adding DENSI : INCOM x
+
+
+Model_13 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                 LH:PS +  PS:INCOM + LH : VM,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_13)
+
+anova(Model_8, Model_13)
+#cannot reject the null; adding LH : VM x
+
+
+Model_14 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                 LH:PS +  PS:INCOM + PS : VM,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_14)
+
+anova(Model_8, Model_14)
+#cannot reject the null; adding PS : VM x
+
+
+Model_15 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                 LH:PS +  PS:INCOM + LH : ABO,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_15)
+
+anova(Model_8, Model_15)
+#cannot reject the null; adding LH : ABO x
+
+
+Model_16 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                 LH:PS +  PS:INCOM + PS : ABO,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_16)
+
+anova(Model_8, Model_16)
+#cannot reject the null; adding PS : ABO x
+
+
+
+Model_17 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                 LH:PS +  PS:INCOM + LH : AGE,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_17)
+
+anova(Model_8, Model_17)
+#cannot reject the null; adding LH : AGE x
+
+
+Model_18 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                 LH:PS +  PS:INCOM + PS : AGE,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_18)
+
+anova(Model_8, Model_18)
+#we can reject the null as it is statistically significant at 0.001;
+#adding PS : AGE works!
+
+
+Model_19 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                 LH:PS +  PS:INCOM + PS : AGE + VM : ABO,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_19)
+
+anova(Model_18, Model_19)
+#cannot reject the null; VM:ABO -> x
+
+
+
+Model_20 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                 LH:PS +  PS:INCOM + PS : AGE + VM : DENSI,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_20)
+
+anova(Model_18, Model_20)
+#cannot reject the null; VM:DENSI -> x
+
+
+Model_21 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                 LH:PS +  PS:INCOM + PS : AGE + ABO : DENSI,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_21)
+
+anova(Model_18, Model_21)
+#cannot reject the null; ABO : DENSI -> x
+
+
+Model_22 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                 LH:PS +  PS:INCOM + PS : AGE + LH : DENSI,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_22)
+
+anova(Model_18, Model_22)
+#cannot reject the null; LH : DENSI -> x
+
+
+Model_23 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                 LH:PS +  PS:INCOM + PS : AGE + PS : DENSI,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_23)
+
+anova(Model_18, Model_23)
+#cannot reject the null; PS : DENSI -> x
+
+
+Model_24 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                 LH:PS +  PS:INCOM + PS : AGE + AGE : DENSI,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_24)
+#Interpretation
+#(1)coefficients + for LH, AGE, DENSI, PS:AGE
+# - for PS, INCOM, VM, ABO, LH:PS, PS:INCOM, and AGE:DENSI
+#weird directions: LH, PS, INCOM, DENSI
+#(2) VM significant at 0.1 level; PS at 0.05;
+#DENSI, PS:AGE, AGE:DENSI at 0.001 level
+#(3)Adj. R = 0.04579
+
+anova(Model_18, Model_24)
+#can reject the null; significant at 0.001
+#Adding AGE : DENSI
+
+
+Model_25 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                 LH:PS +  PS:INCOM + PS : AGE + AGE : DENSI +
+                 VM : AGE,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_25)
+#Interpretation
+#(1)coefficients + for LH, VM, AGE, DENSI, PS:AGE
+# - for PS, INCOM, ABO, LH:PS, PS:INCOM, AGE:DENSI, VM:AGE
+#weird directions: LH, PS, INCOM,VM, DENSI
+#(2) VM, AGE at 0.05; VM:AGE at 0.01
+#PS, DENSI, PS:AGE, AGE:DENSI at 0.1
+#(3)Adj. R = 0.05233
+
+anova(Model_24, Model_25)
+#can reject the null; significant at 0.05
+#add VM:AGE
+
+
+Model_26 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + PS + INCOM  + VM + ABO + AGE + DENSI +
+                 LH:PS +  PS:INCOM + PS : AGE + AGE : DENSI +
+                 VM : AGE + ABO : AGE,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_26)
+
+anova(Model_25, Model_26)
+#cannot reject the null; ABO : AGE -> x
+
+# Then is the model 25 is optimal?
+
 
 #collinearity?
-vif(model_park_vm)
-# no strong collinearity
+vif(Model_25)
+# high collinearity for PS, VM, DENSI, and all interaction variables
+# -> could be a problem for LS estimates
+#In that case, what if we drop some IVs that have not been statistically
+#significant and maybe causing the problems?
+#Suppose that we are dropping INCOM and ABO, and thereby ABO:AGE
+Model_27 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + PS + VM + AGE + DENSI +
+                 LH:PS  + PS : AGE + AGE : DENSI +
+                 VM : AGE,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_27)
+
+anova(Model_27, Model_25)
+#cannot refuse the null. That is, keeping independent variables,
+#INCOM, ABO, ABO:AGE, does not improve the model fit.
+
+#model 28 further drops VM and VM:AGE
+Model_28 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + PS + AGE + DENSI +
+                 LH:PS  + PS : AGE + AGE : DENSI,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_28)
+
+anova(Model_28, Model_27)
+#statistically significant; should keep VM and VM:AGE
+
+#what about dropping PS related variables while keeping VM?
+Model_29 <- lm(SUM_Area_SQUAREKILOMETERS ~
+                 LH + VM + AGE + DENSI +
+                 VM:AGE + AGE : DENSI,
+               data = DA_park_census, y = TRUE, x=TRUE)
+summary(Model_29)
+
+anova(Model_29, Model_27)
+#statistically significant; should keep PS and related variables.
 
 ##Checking model assumptions
 ###1. model muist be correctly specified: direction of causality; linear; no omitted variables
 ###2. errors are indipendently normally distributed.
-stand.res <- stdres(model_park_vm)  # standardized residuals
+stand.res <- stdres(Model_4)  # standardized residuals
 qqnorm((stand.res),
        ylab="Standardized Residuals",
        xlab="Theoretical Quantiles",
@@ -374,15 +693,61 @@ abline(h=0, col="blue")
 ####the intercept is not biased.
 
 ###4. the variance of the errors is constant across cases.
-plot(fitted(model_park_vm), stand.res[1:length(fitted(model_park_vm))],
+plot(fitted(Model_4), stand.res[1:length(fitted(Model_4))],
      xlab="Fitted Values of y",
      ylab="Standardized Residuals",
      main="Std. Residuals vs. Fitted Values for the model")
 abline(h=0, col="red")
 libary(lmtest)
-bptest(model_park_vm)
+bptest(Model_4)
 #### As p-value is large, we cannot reject the null hypothesis.
 ####Therefore, we can conclude that the variance of the errors
 ####is constant across cases, and the assumption is not violated.
 
 ###5. the error is unrelated to all of the independent variables.
+plot_LH_str <- plot(DA_park_census$LH, stand.res[1:length(DA_park_census$LH)],
+     xlab="LH",
+     ylab="Standardized Residuals",
+     main="Std. Residuals vs. LH")
+abline(h=0, col="red")
+
+plot_PS_str <- plot(DA_park_census$PS, stand.res[1:length(DA_park_census$PS)],
+                    xlab="PS",
+                    ylab="Standardized Residuals",
+                    main="Std. Residuals vs. PS")
+abline(h=0, col="red")
+
+plot_INCOM_str <- plot(DA_park_census$INCOM, stand.res[1:length(DA_park_census$INCOM)],
+                    xlab="INCOM",
+                    ylab="Standardized Residuals",
+                    main="Std. Residuals vs. INCOM")
+abline(h=0, col="red")
+
+
+plot_VM_str <- plot(DA_park_census$VM, stand.res[1:length(DA_park_census$VM)],
+                       xlab="VM",
+                       ylab="Standardized Residuals",
+                       main="Std. Residuals vs. VM")
+abline(h=0, col="red")
+
+
+plot_ABO_str <- plot(DA_park_census$ABO, stand.res[1:length(DA_park_census$ABO)],
+                       xlab="ABO",
+                       ylab="Standardized Residuals",
+                       main="Std. Residuals vs. ABO")
+abline(h=0, col="red")
+
+
+plot_DENSI_str <- plot(DA_park_census$DENSI, stand.res[1:length(DA_park_census$DENSI)],
+                     xlab="DENSI",
+                     ylab="Standardized Residuals",
+                     main="Std. Residuals vs. DENSI")
+abline(h=0, col="red")
+
+
+plot_AGE_str <- plot(DA_park_census$AGE, stand.res[1:length(DA_park_census$AGE)],
+                       xlab="AGE",
+                       ylab="Standardized Residuals",
+                       main="Std. Residuals vs. AGE")
+abline(h=0, col="red")
+####Did not find any clear associations.
